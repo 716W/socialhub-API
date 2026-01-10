@@ -1,8 +1,19 @@
 <?php
 
+use App\Http\Controllers\Auth\LoginController;
+use App\Http\Controllers\Auth\LogoutController;
+use App\Http\Controllers\Auth\RegisterController;
+use Illuminate\Auth\Events\Login;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
-Route::get('/user', function (Request $request) {
-    return $request->user();
-})->middleware('auth:sanctum');
+// Public Routes :-
+Route::post('/Register',RegisterController::class);
+Route::post('/login',LoginController::class);
+
+Route::middleware('auth:sanctum')->group(function () {
+    Route::post('/logout',LogoutController::class);
+
+    // for test the current user just :-
+    Route::get('/user', fn (Request $request) => $request->user());
+});
