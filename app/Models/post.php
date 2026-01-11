@@ -1,17 +1,15 @@
 <?php
 
 namespace App\Models;
-
-use Dom\Comment;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class post extends Model
+class Post extends Model
 {
-    use HasFactory ;
+    use HasFactory;
 
     protected $fillable = [
-        'content' ,
+        'content',
         'user_id',
     ];
 
