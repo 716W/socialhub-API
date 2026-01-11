@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests\PostRequest;
+use App\Http\Resources\PostResource;
 use App\Models\Post;
 use App\Services\PostService;
 use Illuminate\Support\Facades\Auth;
@@ -18,7 +19,7 @@ class PostController extends Controller
      */
     public function index()
     {
-        return response()->json($this->postService->GetAllPosts());
+        return PostResource::collection($this->postService->GetAllPosts());
     }
 
     /**
@@ -27,10 +28,11 @@ class PostController extends Controller
     public function store(PostRequest $request)
     {
         $data = $this->postService->CreatePost(
-            $request->validated(),
+            $request->validated('content'),
             Auth::id()
         );
-        return response()->json($data , 201);
+
+        return new PostResource($data);
     }
 
     /**
@@ -38,7 +40,7 @@ class PostController extends Controller
      */
     public function show(string $id)
     {
-        return response()->json($this->postService->GetPostById((int) $id), 200);
+        return new PostResource($this->postService->GetPostById($id));
     }
 
     /**
@@ -47,15 +49,19 @@ class PostController extends Controller
     public function update(PostRequest $request, string $id)
     {
         $post = Post::findOrFail($id);
-        // check if the authenticated user is the owner of the post
-        if ($post->user_id != Auth::id()) {
+
+        if ($post->user_id !== Auth::id()) {
             return response()->json([
-                'message' => 'Unauthorized! You can only update your own posts.', 
+                'message' => 'Unauthorized! You can only update your own posts.',
             ], 403);
         }
-        $data = $this->postService->UpdatePost($post, $request->validated());
 
-        return response()->json($data , 200);
+        $data = $this->postService->UpdatePost(
+            $post,
+            $request->validated('content')
+        );
+
+        return new PostResource($data);
     }
 
     /**
@@ -64,12 +70,12 @@ class PostController extends Controller
     public function destroy(string $id)
     {
         $post = Post::findOrFail($id);
-        if ($post->user_id != Auth::id()) {
+        if ($post->user_id != Auth::user()->id) {
             return response()->json([
                 'message'=> 'Unauthorized! You can only delete your own posts.',
             ], 403);
         }
-        $this->postService->DeletePost((int) $id);
+        $this->postService->DeletePost($id);
         return response()->json(null , 204);
     }
 }
