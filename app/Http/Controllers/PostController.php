@@ -28,7 +28,7 @@ class PostController extends Controller
     public function store(PostRequest $request)
     {
         $data = $this->postService->CreatePost(
-            $request->validated('content'),
+            $request->validated(),
             Auth::id()
         );
 
@@ -58,7 +58,7 @@ class PostController extends Controller
 
         $data = $this->postService->UpdatePost(
             $post,
-            $request->validated('content')
+            $request->validated()
         );
 
         return new PostResource($data);
