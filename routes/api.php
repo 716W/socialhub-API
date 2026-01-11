@@ -9,7 +9,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
 // Public Routes :-
-Route::post('/Register',RegisterController::class);
+Route::post('/register',RegisterController::class);
 Route::post('/login',LoginController::class);
 
 Route::middleware('auth:sanctum')->group(function () {
