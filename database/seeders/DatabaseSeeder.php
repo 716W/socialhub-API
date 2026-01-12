@@ -2,6 +2,7 @@
 
 namespace Database\Seeders;
 
+use App\Models\Comment;
 use App\Models\Post;
 use App\Models\User;
 use Illuminate\Database\Seeder;
@@ -17,8 +18,14 @@ class DatabaseSeeder extends Seeder
         $user = User::factory(10)->create();
 
         // Randomly create posts for the users :-
-        Post::factory(10)
+        $post = Post::factory(10)
             ->recycle($user)
+            ->create();
+
+        // Randomly create comments for the posts :-
+        Comment::factory(30)
+            ->recycle($user)
+            ->recycle($post)
             ->create();
 
         // Create an admin user :-
