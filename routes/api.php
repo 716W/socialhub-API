@@ -3,8 +3,9 @@
 use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\Auth\LogoutController;
 use App\Http\Controllers\Auth\RegisterController;
+use App\Http\Controllers\CommentController;
+use App\Http\Controllers\LikeController;
 use App\Http\Controllers\PostController;
-use Illuminate\Auth\Events\Login;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -15,7 +16,14 @@ Route::post('/login',LoginController::class);
 Route::middleware('auth:sanctum')->group(function () {
     Route::post('/logout',LogoutController::class);
 
+    // Post Routes :-
     Route::apiResource('posts', PostController::class);
+
+    // Comment Routes :-
+    Route::apiResource(name:'posts.comments',controller: CommentController::class)->shallow();
+
+    // Like Route :-
+    Route::post('posts/{post}/like',LikeController::class);
 
     // for test the current user just :-
     Route::get('/user', fn (Request $request) => $request->user());
