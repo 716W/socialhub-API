@@ -8,7 +8,13 @@ use Illuminate\Http\Request;
 class LogoutController extends Controller
 {
     /**
-     * Handle the incoming request.
+     * Logout User
+     * 
+     * Revoke the current access token and log the user out.
+     * 
+     * @tag Authentication
+     * @response 200 {"message": "Logged out successfully"}
+     * @unauthenticated
      */
     public function __invoke(Request $request)
     {
