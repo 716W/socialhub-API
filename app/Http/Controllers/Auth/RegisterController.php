@@ -12,8 +12,15 @@ class RegisterController extends Controller
     public function __construct(protected RegisterService $registerService)
     {
     }
+    
     /**
-     * Handle the incoming request.
+     * Register New User
+     * 
+     * Create a new user account with name, email, and password. Returns user details and access token.
+     * 
+     * @tag Authentication
+     * @response 201 {"message": "User registered successfully", "user": {"id": 1, "name": "John Doe", "email": "john@example.com"}, "token": "1|abcdefghijklmnopqrstuvwxyz"}
+     * @response 422 {"message": "Validation errors", "errors": {"email": ["The email has already been taken."]}}
      */
     public function __invoke(registerRequest $request)
     {

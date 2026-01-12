@@ -14,8 +14,14 @@ class PostController extends Controller
     {
         
     }
+    
     /**
-     * Display a listing of the resource.
+     * Get All Posts
+     * 
+     * Retrieve a paginated list of all posts with user and comment information.
+     * 
+     * @tag Posts
+     * @response 200 {"data": [{"id": 1, "content": "Sample post", "user_id": 1, "created_at": "2026-01-10T12:00:00.000000Z", "updated_at": "2026-01-10T12:00:00.000000Z"}]}
      */
     public function index()
     {
@@ -23,7 +29,14 @@ class PostController extends Controller
     }
 
     /**
-     * Store a newly created resource in storage.
+     * Create New Post
+     * 
+     * Create a new post for the authenticated user.
+     * 
+     * @tag Posts
+     * @bodyParam content string required The content of the post.
+     * @response 201 {"data": {"id": 1, "content": "My new post", "user_id": 1, "created_at": "2026-01-10T12:00:00.000000Z", "updated_at": "2026-01-10T12:00:00.000000Z"}}
+     * @response 422 {"message": "Validation errors", "errors": {"content": ["The content field is required."]}}
      */
     public function store(PostRequest $request)
     {
@@ -36,7 +49,13 @@ class PostController extends Controller
     }
 
     /**
-     * Display the specified resource.
+     * Get Post by ID
+     * 
+     * Retrieve a specific post by its ID with user and comment details.
+     * 
+     * @tag Posts
+     * @response 200 {"data": {"id": 1, "content": "Sample post", "user_id": 1, "created_at": "2026-01-10T12:00:00.000000Z", "updated_at": "2026-01-10T12:00:00.000000Z"}}
+     * @response 404 {"message": "Post not found"}
      */
     public function show(string $id)
     {
@@ -44,7 +63,15 @@ class PostController extends Controller
     }
 
     /**
-     * Update the specified resource in storage.
+     * Update Post
+     * 
+     * Update an existing post. Only the post owner can update it.
+     * 
+     * @tag Posts
+     * @bodyParam content string required The updated content of the post.
+     * @response 200 {"data": {"id": 1, "content": "Updated post content", "user_id": 1, "created_at": "2026-01-10T12:00:00.000000Z", "updated_at": "2026-01-10T13:00:00.000000Z"}}
+     * @response 403 {"message": "Unauthorized! You can only update your own posts."}
+     * @response 404 {"message": "Post not found"}
      */
     public function update(PostRequest $request, string $id)
     {
@@ -65,7 +92,14 @@ class PostController extends Controller
     }
 
     /**
-     * Remove the specified resource from storage.
+     * Delete Post
+     * 
+     * Delete a post. Only the post owner can delete it.
+     * 
+     * @tag Posts
+     * @response 204
+     * @response 403 {"message": "Unauthorized! You can only delete your own posts."}
+     * @response 404 {"message": "Post not found"}
      */
     public function destroy(string $id)
     {

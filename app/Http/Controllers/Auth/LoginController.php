@@ -8,14 +8,20 @@ use App\Services\LoginService;
 
 class LoginController extends Controller
 {
-    /**
-     * Handle the incoming request.
-     */
-
     public function __construct(protected LoginService $loginService)
     {
         
     }
+    
+    /**
+     * Login User
+     * 
+     * Authenticate a user with email and password and receive an access token.
+     * 
+     * @tag Authentication
+     * @response 200 {"message": "Login Successful", "data": {"user": {"id": 1, "name": "John Doe", "email": "john@example.com"}, "token": "1|abcdefghijklmnopqrstuvwxyz"}}
+     * @response 401 {"message": "Invalid credentials"}
+     */
     public function __invoke(loginRequest $request)
     {
         // call service & validate the coming data :-

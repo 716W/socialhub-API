@@ -9,8 +9,16 @@ use Illuminate\Http\Request;
 class LikeController extends Controller
 {
     public function __construct(protected LikeService $likeService) {}
+    
     /**
-     * Handle the incoming request.
+     * Toggle Like on Post
+     * 
+     * Like or unlike a post. If the user has already liked the post, it will be unliked. If not, it will be liked.
+     * 
+     * @tag Likes
+     * @response 200 {"message": "Post Like successfully.", "status": {"attached": [1], "detached": []}}
+     * @response 200 {"message": "Post unlike successfully.", "status": {"attached": [], "detached": [1]}}
+     * @response 404 {"message": "Post not found"}
      */
     public function __invoke(int $postId)
     {
