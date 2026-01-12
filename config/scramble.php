@@ -133,23 +133,4 @@ return [
     ],
 
     'extensions' => [],
-    
-    /*
-     * Authentication configuration for API documentation.
-     * Scramble supports multiple authentication schemes. Here we configure
-     * Laravel Sanctum bearer token authentication.
-     */
-    'api' => [
-        'security_schemes' => [
-            'sanctum' => [
-                'type' => 'http',
-                'scheme' => 'bearer',
-                'bearerFormat' => 'token',
-                'description' => 'Enter your bearer token from login/register endpoint',
-            ],
-        ],
-        'security' => [
-            ['sanctum' => []],
-        ],
-    ],
 ];
