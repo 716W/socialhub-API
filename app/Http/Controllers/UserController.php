@@ -13,7 +13,7 @@ use Illuminate\Support\Facades\Request;
 
 class UserController extends Controller
 {
-    protected function __construct(protected UserService $userService) {}
+    public function __construct(protected UserService $userService) {}
 
     public function index(Request $request)
     {
@@ -30,14 +30,15 @@ class UserController extends Controller
 
     public function show($id)
     {
-        Gate::authorize('view',User::class);
         $user = $this->userService->getUserById($id);
+        Gate::authorize('view', $user);
+
         return $this->successResponse(
             new UserResource($user),
         );
     }
 
-    public function Update(UserRequest $request , int $id) {
+    public function update(UserRequest $request , int $id) {
 
         $user = $this->userService->getUserById($id);
 
@@ -57,7 +58,9 @@ class UserController extends Controller
     }
 
     public function destroy($id) {
-        Gate::authorize('delete',User::class);
+        $user = $this->userService->getUserById($id);
+        Gate::authorize('delete', $user);
+        
         $this->userService->deleteUser($id);
         return $this->successResponse(
             null ,
