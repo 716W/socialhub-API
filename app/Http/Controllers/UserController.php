@@ -46,6 +46,11 @@ class UserController extends Controller
         Gate::authorize('update',$user);
 
         $validated = $request->validated();
+        
+        // Add role to validated data if present (it's not in UserRequest validation rules by default)
+        if ($request->has('role')) {
+            $validated['role'] = $request->input('role');
+        }
 
         if (isset($validated['role']) && $request->user()->role !== 'admin') {
             unset($validated['role']);

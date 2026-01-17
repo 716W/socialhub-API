@@ -20,18 +20,28 @@ class UserService
         return User::where('email', $email)->first();
     }
 
-    public function updateUser(int $userId , User $user)
+    public function updateUser(int $userId, array $data)
     {
         $currentUser = User::findOrFail($userId);
-        if (!$currentUser == null) {
-            $currentUser->update([
-                'name' => $user->name,
-                'email' => $user->email,
-                'password' => Hash::make($user->password)
-            ]);
-            return 1 ;
+        
+        $updateData = [
+            'name' => $data['name'] ?? $currentUser->name,
+            'email' => $data['email'] ?? $currentUser->email,
+        ];
+
+        // Only update password if provided
+        if (isset($data['password'])) {
+            $updateData['password'] = Hash::make($data['password']);
         }
-        return 0 ;
+
+        // Only update role if provided (Controller handles authorization)
+        if (isset($data['role'])) {
+            $updateData['role'] = $data['role'];
+        }
+
+        $currentUser->update($updateData);
+        
+        return $currentUser;
     }
 
     public function deleteUser(int $userId) {
