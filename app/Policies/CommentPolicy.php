@@ -20,4 +20,14 @@ class CommentPolicy
             return true ;
         }
     }
+
+    public function update(User $user, \App\Models\Comment $comment)
+    {
+        return $user->id === $comment->user_id;
+    }
+
+    public function delete(User $user, \App\Models\Comment $comment)
+    {
+        return $user->id === $comment->user_id;
+    }
 }
