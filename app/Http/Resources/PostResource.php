@@ -21,6 +21,7 @@ class PostResource extends JsonResource
                 'id' => $this->user->id ,
                 'name' => $this->user->name ,
             ] ,
+            'count_like' => $this->count_like ?? 0 ,
             'posted_at' => $this->created_at->format('Y-m-d') ,
         ];
     }
