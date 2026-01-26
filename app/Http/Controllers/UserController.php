@@ -4,12 +4,10 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\UserRequest;
 use App\Http\Resources\UserResource;
-use App\Http\Resources\UserResponse;
 use App\Models\User;
 use App\Services\UserService;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Gate;
-use Illuminate\Http\Resources;
-use Illuminate\Support\Facades\Request;
 
 class UserController extends Controller
 {
@@ -33,9 +31,7 @@ class UserController extends Controller
         $user = $this->userService->getUserById($id);
         Gate::authorize('view', $user);
 
-        return $this->successResponse(
-            new UserResource($user),
-        );
+        return $this->successResponse(new UserResource($user), 'User retrieved successfully.');
     }
 
     public function update(UserRequest $request , int $id) {
@@ -67,9 +63,6 @@ class UserController extends Controller
         Gate::authorize('delete', $user);
         
         $this->userService->deleteUser($id);
-        return $this->successResponse(
-            null ,
-            'User deleted successfully.'
-        );
+        return $this->successResponse(null, 'User deleted successfully.', 204);
     }
 }

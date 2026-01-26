@@ -13,7 +13,7 @@ class UserService
     }
 
     public function getUserById(int $userId) {
-        return User::findOrNew( $userId );
+        return User::findOrFail($userId);
     }
 
     public function getUserByEmail(string $email) {
