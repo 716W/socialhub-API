@@ -22,9 +22,10 @@ class CommentController extends Controller
      */
     public function index(int $postId)
     {
-        return CommentResource::collection(
-            $this->commentService->getCommentsForPost($postId)
-        );
+        $comments = $this->commentService->getCommentsForPost($postId);
+        $comments->getCollection()->transform(fn ($comment) => (new CommentResource($comment))->toArray(request()));
+
+        return $this->paginatedResponse($comments, 'Comments retrieved successfully');
     }
 
     /**
@@ -44,8 +45,7 @@ class CommentController extends Controller
             Auth::id(),
             $post->id
         );
-
-        return new CommentResource($data);
+        return $this->createResponse(new CommentResource($data), 'Comment created successfully');
     }
 
     /**
@@ -59,7 +59,8 @@ class CommentController extends Controller
      */
     public function show(string $id)
     {
-        return new CommentResource($this->commentService->getCommentById($id));
+        $comment = $this->commentService->getCommentById($id);
+        return $this->successResponse(new CommentResource($comment), 'Comment retrieved successfully');
     }
 
     /**
@@ -73,20 +74,18 @@ class CommentController extends Controller
      * @response 403 {"message": "Unauthorized! You can only update your own comments."}
      * @response 404 {"message": "Comment not found"}
      */
-    public function update(CommentRequest $request, string $postId)
+    public function update(CommentRequest $request, string $id)
     {
-        $comment = $this->commentService->getCommentById($postId);
+        $comment = $this->commentService->getCommentById($id);
         if ($comment->user_id != Auth::id()) {
-            return response()->json([
-                'message' => 'Unauthorized! You can only update your own comments.',
-            ], 403);
+            return $this->errorResponse('Unauthorized! You can only update your own comments.', 403);
         }
         $data = $this->commentService->updateComment(
-            $postId,
+            $id,
             $request->validated() ,
         );
 
-        return new CommentResource($data);
+        return $this->successResponse(new CommentResource($data), 'Comment updated successfully');
     }
 
     /**
@@ -103,13 +102,10 @@ class CommentController extends Controller
     {
         $comment = $this->commentService->getCommentById($id);
         if ($comment->user_id != Auth::id()) {
-            return response()->json([
-                'message' => 'Unauthorized! You can only delete your own comments.',
-            ], 403);
+            return $this->errorResponse('Unauthorized! You can only delete your own comments.', 403);
         }
+
         $this->commentService->deleteComment($id);
-        return response()->json([
-            'message' => 'Comment deleted successfully.',
-        ] , 200);
+        return $this->successResponse(null, 'Comment deleted successfully.');
     }
 }
