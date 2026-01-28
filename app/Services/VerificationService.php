@@ -2,8 +2,11 @@
 
 namespace App\Services;
 
+use App\Mail\OtpMail;
 use App\Models\User;
+use Carbon\Carbon;
 use Illuminate\Auth\Events\Verified;
+use Illuminate\Support\Facades\Mail;
 
 class VerificationService
 {
@@ -30,6 +33,53 @@ class VerificationService
         }
 
         $user->sendEmailVerificationNotification();
+        return true ;
+    }
+
+    // -------------------------------------------------
+    // Generate Code and Send it to App (Mobile) :-
+    // -------------------------------------------------
+
+    public function sendOtp(User $user) 
+    {
+        // genrate a 6-digit OTP code
+        $code = rand(1000,9999);
+
+        // store the code in time-limited cache (10 minutes)
+        $user->update([
+            'otp_code' => $code ,
+            'otp_expires_at' => Carbon::now()->addMinutes(10) ,
+        ]);
+
+        // sned email with the OTP code
+        Mail::to($user->email)->send(new OtpMail($code));
+    }
+
+    public function verifyOtp(User $user , string $inputCode)
+    {
+        // check code matches and not expired
+        if ($user->otp_code !== $inputCode) {
+            return 'Invalid code' ;
+        }
+
+        // check if code is expired
+        if (Carbon::now()->greaterThan($user->otp_expires_at)) {
+            return 'Code expired' ;
+        }
+
+        // mark email as verified
+        // update verification fields for the user
+        if ($user->hasVerifiedEmail() ) {
+            $user->markEmailAsVerified();
+            event(new Verified($user));
+        }
+
+        // clear otp fields
+        $user->update([
+            'otp_code' => null ,
+            'otp_expires_at' => null ,
+        ]);
+
         return true ;
     }
 }
