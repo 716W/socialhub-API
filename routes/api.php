@@ -5,6 +5,7 @@ use App\Http\Controllers\Auth\LogoutController;
 use App\Http\Controllers\Auth\RegisterController;
 use App\Http\Controllers\CommentController;
 use App\Http\Controllers\LikeController;
+use App\Http\Controllers\MobileAuthController;
 use App\Http\Controllers\PostController;
 use App\Http\Controllers\ResendVerficationController;
 use App\Http\Controllers\UserController;
@@ -30,6 +31,10 @@ Route::middleware('auth:sanctum')->group(function () {
     // Conventional Laravel endpoint name (kept alongside /email/resend)
     Route::post('/email/verification-notification', ResendVerficationController::class)
         ->middleware('throttle:6,1');
+
+    // Email Verification Route (Mobile App) 
+    Route::post('/mobile/verify',[MobileAuthController::class , 'verify']);
+    Route::post('/mobile/resend',[MobileAuthController::class , 'resend']);
 
     // Logout Route :-
     Route::post('/logout',LogoutController::class);
