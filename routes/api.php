@@ -6,7 +6,10 @@ use App\Http\Controllers\Auth\RegisterController;
 use App\Http\Controllers\CommentController;
 use App\Http\Controllers\LikeController;
 use App\Http\Controllers\PostController;
+use App\Http\Controllers\ResendVerficationController;
 use App\Http\Controllers\UserController;
+use App\Http\Controllers\VerifyEmailController;
+use Illuminate\Auth\Middleware\EnsureEmailIsVerified;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -14,20 +17,37 @@ use Illuminate\Support\Facades\Route;
 Route::post('/register',RegisterController::class);
 Route::post('/login',LoginController::class);
 
+// Email Verification Route (must be reachable from email clients without auth token)
+Route::get('/email/verify/{id}/{hash}', VerifyEmailController::class)
+    ->middleware('signed' , 'throttle:6,1')
+    ->name('verification.verify');
+
 Route::middleware('auth:sanctum')->group(function () {
+    // Resend Verification Email Route :-
+    Route::post('/email/resend', ResendVerficationController::class)
+        ->middleware('throttle:6,1');
+
+    // Conventional Laravel endpoint name (kept alongside /email/resend)
+    Route::post('/email/verification-notification', ResendVerficationController::class)
+        ->middleware('throttle:6,1');
+
+    // Logout Route :-
     Route::post('/logout',LogoutController::class);
 
-    // User Routes :-
-    Route::apiResource('users' , UserController::class);
+    // Verified-only routes
+    Route::middleware(EnsureEmailIsVerified::class)->group(function () {
+        // User Routes :-
+        Route::apiResource('users' , UserController::class);
 
-    // Post Routes :-
-    Route::apiResource('posts', PostController::class);
+        // Post Routes :-
+        Route::apiResource('posts', PostController::class);
 
-    // Comment Routes :-
-    Route::apiResource(name:'posts.comments',controller: CommentController::class)->shallow();
+        // Comment Routes :-
+        Route::apiResource(name:'posts.comments',controller: CommentController::class)->shallow();
 
-    // Like Route :-
-    Route::post('posts/{post}/like',LikeController::class);
+        // Like Route :-
+        Route::post('posts/{post}/like',LikeController::class);
+    });
 
     // for test the current user just :-
     Route::get('/user', fn (Request $request) => $request->user());
