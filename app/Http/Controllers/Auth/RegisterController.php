@@ -5,11 +5,14 @@ namespace App\Http\Controllers\Auth;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\registerRequest;
 use App\Services\RegisterService;
+use App\Services\VerificationService;
 use Illuminate\Http\Request;
 
 class RegisterController extends Controller
 {
-    public function __construct(protected RegisterService $registerService)
+    public function __construct(
+    protected RegisterService $registerService ,
+    protected VerificationService $verificationService)
     {
     }
     
