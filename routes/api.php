@@ -15,29 +15,33 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
 // Public Routes :-
-Route::post('/register',RegisterController::class);
-Route::post('/login',LoginController::class);
+Route::post('register',RegisterController::class);
+Route::post('login',LoginController::class);
 
 // Email Verification Route (must be reachable from email clients without auth token)
-Route::get('/email/verify/{id}/{hash}', VerifyEmailController::class)
+Route::get('email/verify/{id}/{hash}', VerifyEmailController::class)
     ->middleware('signed' , 'throttle:6,1')
     ->name('verification.verify');
 
 Route::middleware('auth:sanctum')->group(function () {
     // Resend Verification Email Route :-
-    Route::post('/email/resend', ResendVerficationController::class)
-        ->middleware('throttle:6,1');
+    Route::post('email/resend', ResendVerficationController::class)
+        ->middleware('throttle:6,1')
+        ->name('email.resend');
 
     // Conventional Laravel endpoint name (kept alongside /email/resend)
-    Route::post('/email/verification-notification', ResendVerficationController::class)
-        ->middleware('throttle:6,1');
+    Route::post('email/verification-notification', ResendVerficationController::class)
+        ->middleware('throttle:6,1')
+        ->name('email.verification-notification');
 
     // Email Verification Route (Mobile App) 
-    Route::post('/mobile/verify',[MobileAuthController::class , 'verify']);
-    Route::post('/mobile/resend',[MobileAuthController::class , 'resend']);
+    Route::post('mobile/verify',[MobileAuthController::class , 'verify'])
+        ->name('mobile.verify');
+    Route::post('mobile/resend',[MobileAuthController::class , 'resend'])
+        ->name('mobile.resend');
 
     // Logout Route :-
-    Route::post('/logout',LogoutController::class);
+    Route::post('logout',LogoutController::class);
 
     // Verified-only routes
     Route::middleware(EnsureEmailIsVerified::class)->group(function () {
@@ -56,9 +60,10 @@ Route::middleware('auth:sanctum')->group(function () {
 
         // Like Route :-
         Route::post('posts/{post}/like',LikeController::class)
-            ->whereNumber('post');
+            ->whereNumber('post')
+            ->name('posts.like');
     });
 
     // for test the current user just :-
-    Route::get('/user', fn (Request $request) => $request->user());
+    Route::get('user', fn (Request $request) => $request->user());
 });
