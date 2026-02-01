@@ -4,7 +4,6 @@ namespace App\Http\Controllers;
 
 use App\Services\LikeService;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Http\Request;
 
 class LikeController extends Controller
 {
@@ -28,9 +27,10 @@ class LikeController extends Controller
         );
         $status = count($result['attached']) > 0 ? 'Like' : 'unlike';
 
-        return response()->json([
-            'message' => "Post $status successfully.",
-            'status' => $result
-        ]);
+        // return response()->json([
+        //     'message' => "Post $status successfully.",
+        //     'status' => $result
+        // ]);
+        return $this->successResponse($result, "Post $status successfully.");
     }
 }

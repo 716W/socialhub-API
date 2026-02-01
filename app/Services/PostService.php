@@ -7,12 +7,17 @@ class PostService
 {
     public function GetAllPosts(int $pageSize = 10)
     {
-        return Post::with('user')->latest()->paginate($pageSize);
+        return Post::with('user')
+            ->withCount(['likes as count_like'])
+            ->latest()
+            ->paginate($pageSize);
     }
 
     public function GetPostById(int $postId)
     {
-        return Post::with('user')->findOrFail($postId);
+        return Post::with('user')
+            ->withCount(['likes as count_like'])
+            ->findOrFail($postId);
     }
 
     public function CreatePost(array $arrData , int $userId) {

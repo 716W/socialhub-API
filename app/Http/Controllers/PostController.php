@@ -25,7 +25,12 @@ class PostController extends Controller
      */
     public function index()
     {
-        return PostResource::collection($this->postService->GetAllPosts());
+        $posts = $this->postService->GetAllPosts();
+
+        // Transform paginated items to resource arrays so pagination helper can wrap them
+        $posts->getCollection()->transform(fn ($post) => (new PostResource($post))->toArray(request()));
+
+        return $this->paginatedResponse($posts, 'Posts retrieved successfully');
     }
 
     /**
@@ -45,7 +50,7 @@ class PostController extends Controller
             Auth::id()
         );
 
-        return new PostResource($data);
+        return $this->createResponse(new PostResource($data), 'Post created successfully');
     }
 
     /**
@@ -59,7 +64,9 @@ class PostController extends Controller
      */
     public function show(string $id)
     {
-        return new PostResource($this->postService->GetPostById($id));
+        $post = $this->postService->GetPostById($id);
+
+        return $this->successResponse(new PostResource($post), 'Post retrieved successfully');
     }
 
     /**
@@ -78,9 +85,7 @@ class PostController extends Controller
         $post = Post::findOrFail($id);
 
         if ($post->user_id !== Auth::id()) {
-            return response()->json([
-                'message' => 'Unauthorized! You can only update your own posts.',
-            ], 403);
+            return $this->errorResponse('Unauthorized! You can only update your own posts.', 403);
         }
 
         $data = $this->postService->UpdatePost(
@@ -88,7 +93,7 @@ class PostController extends Controller
             $request->validated()
         );
 
-        return new PostResource($data);
+        return $this->successResponse(new PostResource($data), 'Post updated successfully');
     }
 
     /**
@@ -104,12 +109,10 @@ class PostController extends Controller
     public function destroy(string $id)
     {
         $post = Post::findOrFail($id);
-        if ($post->user_id != Auth::user()->id) {
-            return response()->json([
-                'message'=> 'Unauthorized! You can only delete your own posts.',
-            ], 403);
+        if ($post->user_id != Auth::id()) {
+            return $this->errorResponse('Unauthorized! You can only delete your own posts.', 403);
         }
         $this->postService->DeletePost($id);
-        return response()->json(null , 204);
+        return $this->successResponse(null, 'Post deleted successfully', 204);
     }
 }

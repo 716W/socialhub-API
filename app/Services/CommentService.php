@@ -3,7 +3,7 @@
 namespace App\Services;
 
 use App\Models\Comment ;
-use App\Models\Post;
+// use App\Models\Post;
 
 class CommentService
 {
@@ -13,12 +13,12 @@ class CommentService
                     ->findOrFail($commentId);
     }
 
-    public function getCommentsForPost(int $postId)
+    public function getCommentsForPost(int $postId, int $pageSize = 10)
     {
         return Comment::where('post_id' , $postId)
                 ->with('user')
                 ->latest()
-                ->get();
+                ->paginate($pageSize);
     }
     public function createComment(string $content , int $userId , int $postId)
     {

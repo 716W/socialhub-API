@@ -3,6 +3,7 @@
 namespace App\Services;
 
 use App\Models\User;
+use Illuminate\Auth\Events\Registered;
 use Illuminate\Support\Facades\Hash;
 
 class RegisterService
@@ -18,6 +19,9 @@ class RegisterService
 
         // Generate Token :-
         $token = $user->createToken('auth_token')->plainTextToken;
+
+        // use event to send email verification :-
+        event(new Registered($user));
 
         // return DTO :-
         return [
