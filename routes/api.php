@@ -18,16 +18,21 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::post('/logout',LogoutController::class);
 
     // User Routes :-
-    Route::apiResource('users' , UserController::class);
+    Route::apiResource('users', UserController::class)
+        ->whereNumber('user');
 
     // Post Routes :-
-    Route::apiResource('posts', PostController::class);
+    Route::apiResource('posts', PostController::class)
+        ->whereNumber('post');
 
     // Comment Routes :-
-    Route::apiResource(name:'posts.comments',controller: CommentController::class)->shallow();
+    Route::apiResource(name:'posts.comments',controller: CommentController::class)->shallow()
+        ->whereNumber('post')
+        ->whereNumber('comment');
 
     // Like Route :-
-    Route::post('posts/{post}/like',LikeController::class);
+    Route::post('posts/{post}/like',LikeController::class)
+        ->whereNumber('post');
 
     // for test the current user just :-
     Route::get('/user', fn (Request $request) => $request->user());
