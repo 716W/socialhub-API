@@ -7,6 +7,7 @@ use App\Http\Controllers\CommentController;
 use App\Http\Controllers\LikeController;
 use App\Http\Controllers\MobileAuthController;
 use App\Http\Controllers\PostController;
+use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\ResendVerficationController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\VerifyEmailController;
@@ -52,8 +53,11 @@ Route::middleware('auth:sanctum')->group(function () {
 
         // Like Route :-
         Route::post('posts/{post}/like',LikeController::class);
+
+        // Profile Routes :-
+        Route::post('profile', ProfileController::class);
     });
 
     // for test the current user just :-
-    Route::get('/user', fn (Request $request) => $request->user());
+    Route::get('/user', fn (Request $request) => $request->user()->load('profile'));
 });
