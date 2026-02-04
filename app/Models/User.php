@@ -61,4 +61,9 @@ class User extends Authenticatable implements MustVerifyEmail
     public function likedPosts() {
         return $this->belongsToMany(Post::class , 'likes')->withTimestamps();
     }
+
+    public function profile()
+    {
+        return $this->hasOne(UserProfile::class);
+    }
 }
