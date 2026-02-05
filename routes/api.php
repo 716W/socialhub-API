@@ -24,7 +24,7 @@ Route::get('email/verify/{id}/{hash}', VerifyEmailController::class)
     ->middleware('signed' , 'throttle:6,1')
     ->name('verification.verify');
 
-Route::middleware('auth:sanctum')->group(function () {
+Route::middleware(['auth:sanctum', 'throttle:api'])->group(function () {
     // Resend Verification Email Route :-
     Route::post('email/resend', ResendVerficationController::class)
         ->middleware('throttle:6,1')
