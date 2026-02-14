@@ -34,7 +34,7 @@ class UpdateProfileRequest extends FormRequest
     {
         return [
             'username.unique'  => 'The username is already used , please choose other !',
-            'website.url'      => 'You must enter vaild url start with (http or https) .'
+            'website.url'      => 'You must enter valid url start with (http or https) .'
         ];
     }
 }

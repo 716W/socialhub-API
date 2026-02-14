@@ -47,14 +47,14 @@ class VerificationService
         $max = (int) str_repeat('9', $length);
         
         // genrate a 6-digit OTP code
-        $code = (string) rand($min, $max);
+        $code = (string) random_int($min, $max);
 
         // store the hashed code in time-limited cache
-        $user->update([
+        $user->forceFill([
             'otp_code' => hash('sha256', $code),
             'otp_expires_at' => Carbon::now()->addMinutes(config('otp.expiration', 10)),
             'otp_attempts' => 0, // reset attempts when new OTP is sent
-        ]);
+        ])->save();
 
         // send email with the OTP code
         Mail::to($user->email)->send(new OtpMail($code));
@@ -89,11 +89,11 @@ class VerificationService
         }
 
         // clear otp fields
-        $user->update([
+        $user->forceFill([
             'otp_code' => null,
             'otp_expires_at' => null,
             'otp_attempts' => 0,
-        ]);
+        ])->save();
 
         return true;
     }
