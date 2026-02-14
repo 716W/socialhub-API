@@ -3,12 +3,14 @@
 use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\Auth\LogoutController;
 use App\Http\Controllers\Auth\RegisterController;
+use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\CommentController;
 use App\Http\Controllers\LikeController;
 use App\Http\Controllers\MobileAuthController;
 use App\Http\Controllers\PostController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\ResendVerficationController;
+use App\Http\Controllers\TagController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\VerifyEmailController;
 use Illuminate\Auth\Middleware\EnsureEmailIsVerified;
@@ -18,6 +20,8 @@ use Illuminate\Support\Facades\Route;
 // Public Routes :-
 Route::post('register',RegisterController::class);
 Route::post('login',LoginController::class);
+Route::get('categories', [CategoryController::class, 'index'])->name('categories.index');
+Route::get('tags', [TagController::class, 'index'])->name('tags.index');
 
 // Email Verification Route (must be reachable from email clients without auth token)
 Route::get('email/verify/{id}/{hash}', VerifyEmailController::class)
@@ -65,6 +69,10 @@ Route::middleware(['auth:sanctum', 'throttle:api'])->group(function () {
 
         // Profile Routes :-
         Route::post('profile', ProfileController::class);
+
+        // Category Routes :-
+        Route::post('categories', [CategoryController::class, 'store'])->name('categories.store');
+        Route::post('tags', [TagController::class, 'store'])->name('tags.store');
     });
 
     // for test the current user just :-
