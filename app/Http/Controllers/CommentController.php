@@ -77,9 +77,9 @@ class CommentController extends Controller
     public function update(CommentRequest $request, string $id)
     {
         $comment = $this->commentService->getCommentById($id);
-        if ($comment->user_id != Auth::id()) {
-            return $this->errorResponse('Unauthorized! You can only update your own comments.', 403);
-        }
+        
+        \Illuminate\Support\Facades\Gate::authorize('update', $comment);
+
         $data = $this->commentService->updateComment(
             $id,
             $request->validated() ,
@@ -101,9 +101,8 @@ class CommentController extends Controller
     public function destroy(string $id)
     {
         $comment = $this->commentService->getCommentById($id);
-        if ($comment->user_id != Auth::id()) {
-            return $this->errorResponse('Unauthorized! You can only delete your own comments.', 403);
-        }
+        
+        \Illuminate\Support\Facades\Gate::authorize('delete', $comment);
 
         $this->commentService->deleteComment($id);
         return $this->successResponse(null, 'Comment deleted successfully.');

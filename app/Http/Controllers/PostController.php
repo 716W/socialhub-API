@@ -84,9 +84,7 @@ class PostController extends Controller
     {
         $post = Post::findOrFail($id);
 
-        if ($post->user_id !== Auth::id()) {
-            return $this->errorResponse('Unauthorized! You can only update your own posts.', 403);
-        }
+        \Illuminate\Support\Facades\Gate::authorize('update', $post);
 
         $data = $this->postService->UpdatePost(
             $post,
@@ -109,9 +107,9 @@ class PostController extends Controller
     public function destroy(string $id)
     {
         $post = Post::findOrFail($id);
-        if ($post->user_id != Auth::id()) {
-            return $this->errorResponse('Unauthorized! You can only delete your own posts.', 403);
-        }
+        
+        \Illuminate\Support\Facades\Gate::authorize('delete', $post);
+
         $this->postService->DeletePost($id);
         return $this->successResponse(null, 'Post deleted successfully', 204);
     }
