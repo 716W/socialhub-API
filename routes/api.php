@@ -39,6 +39,7 @@ Route::middleware(['auth:sanctum', 'throttle:api'])->group(function () {
     Route::post('mobile/verify',[MobileAuthController::class , 'verify'])
         ->name('mobile.verify');
     Route::post('mobile/resend',[MobileAuthController::class , 'resend'])
+        ->middleware('throttle:3,60')
         ->name('mobile.resend');
 
     // Logout Route :-
