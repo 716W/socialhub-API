@@ -533,14 +533,6 @@ This project is open-sourced software licensed under the [MIT license](LICENSE).
 
 ---
 
-## 📧 Contact
-
-**Developer**: Ali
-**GitHub**: [YourGitHubUsername](https://github.com/YourUsername)
-**Email**: your.email@example.com
-
----
-
 <div align="center">
 
 **Built with ❤️ using Laravel**
