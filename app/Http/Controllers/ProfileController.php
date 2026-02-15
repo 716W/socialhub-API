@@ -3,47 +3,35 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests\UpdateProfileRequest;
+use App\Http\Resources\ProfileResource;
 use App\Services\MediaService;
+use App\Services\ProfileServie;
+use GrahamCampbell\ResultType\Success;
 use Illuminate\Http\Request;
 
 class ProfileController extends Controller
 {
-    public function __construct(protected MediaService $mediaService) {}
+    public function __construct(protected ProfileServie $profileService) {}
     /**
      * Handle the incoming request.
      */
-    public function __invoke(UpdateProfileRequest $request)
+    public function show(Request $request)
     {
-        // validated the request :-
-        $data = $request->validated();
-        $user = $request->user();
-
-        // proccess the image by use MediaService :-
-        if ($request->hasFile('avatar')) {
-            if ($user->profile?->avatar) {
-                $data['avatar'] = $this->mediaService->replace(
-                    $request->file('avatar'),
-                    $user->profile->avatar,
-                    'avatars'
-                );
-            } else {
-                $data['avatar'] = $this->mediaService->upload(
-                    $request->file('avatar'),
-                    'avatars'
-                );
-            }
-        }
-
-        // update :- 
-        $user->profile()->updateOrCreate(
-            ['user_id' => $user->id],
-            $data
+        $user = $this->profileService->getProfile($request->user());
+        return $this->successResponse(
+            new ProfileResource($user->profile),
+        );
+    }
+    public function update(UpdateProfileRequest $request)
+    {
+        $profile = $this->profileService->updateProfile(
+            $request->user(),
+            $request->validated()
         );
 
         return $this->successResponse(
-            $user->load('profile'),
-            'Profile updated successfully',
-            200
+            new ProfileResource($profile),
+            'Profile updated successfully'
         );
     }
 }
