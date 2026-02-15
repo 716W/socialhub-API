@@ -68,7 +68,8 @@ Route::middleware(['auth:sanctum', 'throttle:api'])->group(function () {
         Route::post('posts/{post}/like',LikeController::class);
 
         // Profile Routes :-
-        Route::post('profile', ProfileController::class);
+        Route::post('profile', [ProfileController::class , 'update'])->name('profile.update');
+        Route::get('profile', [ProfileController::class , 'show'])->name('profile.show');
 
         // Category Routes :-
         Route::post('categories', [CategoryController::class, 'store'])->name('categories.store');
