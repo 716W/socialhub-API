@@ -1,192 +1,247 @@
 # SocialHub API
 
-A modern RESTful API for a social media platform built with Laravel. This API provides endpoints for user authentication, post management, comments, and likes functionality.
+<div align="center">
 
-## 🚀 Project Idea
+![Laravel](https://img.shields.io/badge/Laravel-12-FF2D20?style=for-the-badge&logo=laravel&logoColor=white)
+![PHP](https://img.shields.io/badge/PHP-8.2+-777BB4?style=for-the-badge&logo=php&logoColor=white)
+![MySQL](https://img.shields.io/badge/MySQL-8.0-4479A1?style=for-the-badge&logo=mysql&logoColor=white)
+![Sanctum](https://img.shields.io/badge/Sanctum-Auth-FF2D20?style=for-the-badge&logo=laravel&logoColor=white)
+![License](https://img.shields.io/badge/License-MIT-green?style=for-the-badge)
 
-SocialHub is a backend API for a social media application where users can:
+**A Modern Social Networking RESTful API built with Clean Architecture Principles**
 
--   Register and authenticate securely with email verification
--   Verify email via web link or mobile OTP (6-digit code)
--   Create, read, update, and delete posts
--   Comment on posts
--   Like/unlike posts
--   View all posts and comments with user information
+*Final Project - Botfi Intensive Training Program*
 
-## 📋 Features
+[Features](#-key-features) • [Installation](#-installation--setup) • [API Documentation](#-api-endpoints) • [Database Schema](#-database-schema)
 
--   **User Authentication**: Secure registration, login, and logout using Laravel Sanctum
--   **Email Verification**: 
-    -   Web verification via signed email links
-    -   Mobile OTP verification with 6-digit codes
-    -   Secure hashed OTP storage (SHA-256)
-    -   Attempt limiting (max 5 tries per OTP)
-    -   Configurable OTP expiration (default 10 minutes)
-    -   Queued email sending for better performance
--   **Post Management**: Full CRUD operations for posts
--   **Comments System**: Nested comments on posts with full CRUD support
--   **Like System**: Toggle like/unlike functionality on posts
--   **API Documentation**: Auto-generated interactive API documentation using Scramble
--   **Authorization**: Users can only modify their own posts and comments
--   **Testing**: Comprehensive test suite using Pest PHP
+</div>
 
-## 🛠️ Technologies & Tools
+---
 
--   **Framework**: Laravel 11.x
--   **Authentication**: Laravel Sanctum (Token-based authentication)
--   **API Documentation**: Scramble - Auto-generates OpenAPI/Swagger documentation
--   **Testing**: Pest PHP - Modern testing framework for PHP
--   **Database**: MySQL/PostgreSQL support
--   **Code Quality**: PHPStan for static analysis
+## 📖 About The Project
 
-## 📁 Project Structure
+**SocialHub API** is a comprehensive backend system for a social networking platform, developed as the capstone project of an intensive Laravel training program at **Botfi Company**. This project demonstrates professional-grade API development using Laravel's best practices, clean architecture patterns, and modern authentication mechanisms.
+
+This project was built under the expert mentorship of **Omar Baflah** ([GitHub](https://github.com/omerbaflah)), implementing industry-standard patterns including Service Layer Architecture, Repository Pattern, Policy-Based Authorization, and Test-Driven Development principles.
+
+---
+
+## ✨ Key Features
+
+### Core Functionality
+- **Secure Authentication System** - JWT-based authentication powered by Laravel Sanctum
+- **Email Verification** - Mandatory email verification with resend functionality
+- **Mobile OTP Verification** - Alternative verification method for mobile applications
+- **Role-Based Access Control (RBAC)** - Admin and User roles with granular permissions
+- **Social Interactions** - Create posts, comment, like, and engage with content
+- **User Profiles** - Customizable profiles with bio, avatar, and website links
+- **Advanced Tagging System** - Many-to-Many relationship for flexible content categorization
+- **Category Management** - Admin-controlled content categorization
+- **Media Management** - Dedicated service for image uploads, replacements, and deletions
+
+### Technical Highlights
+- **Service Layer Pattern** - Complete separation of business logic from controllers
+- **Database Transactions** - ACID-compliant operations for critical data integrity
+- **Policy-Based Authorization** - Laravel Gates and Policies for fine-grained access control
+- **API Resources** - Consistent, formatted JSON responses across all endpoints
+- **Form Request Validation** - Dedicated validation classes for clean controller logic
+- **Dependency Injection** - Loose coupling and high testability through DI containers
+- **RESTful Design** - Industry-standard REST API conventions
+- **Automatic Documentation** - API documentation via Dedoc Scramble
+
+---
+
+## 🏗️ Architecture Overview
+
+### Why Service Layer Pattern?
+
+This project strictly follows the **Service Layer Pattern** to achieve:
+
+1. **Separation of Concerns**: Controllers handle HTTP requests/responses only, while Services contain all business logic
+2. **Reusability**: Services can be injected into multiple controllers, commands, or jobs
+3. **Testability**: Business logic can be unit tested independently of HTTP layer
+4. **Maintainability**: Changes to business rules don't require controller modifications
+5. **Scalability**: Easy to extend functionality without breaking existing code
+
+### Architecture Flow
 
 ```
-app/
-├── Http/
-│   ├── Controllers/
-│   │   ├── Auth/
-│   │   │   ├── LoginController.php      # User login
-│   │   │   ├── RegisterController.php   # User registration
-│   │   │   └── LogoutController.php     # User logout
-│   │   ├── VerifyEmailController.php    # Web email verification (signed link)
-│   │   ├── ResendVerificationController.php  # Resend verification link/email
-│   │   ├── MobileAuthController.php     # Mobile OTP verification & resend
-│   │   ├── PostController.php           # Post CRUD operations
-│   │   ├── CommentController.php        # Comment CRUD operations
-│   │   ├── UserController.php           # User management
-│   │   └── LikeController.php           # Like/unlike toggle
-│   ├── Requests/                        # Form request validation
-│   ├── Resources/                       # API resource transformations
-│   └── Traits/
-│       └── ApiResponse.php              # Standardized API responses
-├── Mail/
-│   └── OtpMail.php                      # OTP email (queued)
-├── Models/
-│   ├── User.php                         # User model (with email verification)
-│   ├── Post.php                         # Post model
-│   └── Comment.php                      # Comment model
-├── Policies/
-│   ├── PostPolicy.php                   # Post authorization
-│   ├── CommentPolicy.php                # Comment authorization
-│   └── UserPolicy.php                   # User authorization
-└── Services/
-    ├── VerificationService.php          # Email verification & OTP logic
-    ├── LoginService.php                 # Login business logic
-    ├── RegisterService.php              # Registration business logic
-    ├── PostService.php                  # Post business logic
-    ├── CommentService.php               # Comment business logic
-    ├── UserService.php                  # User business logic
-    └── LikeService.php                  # Like business logic
-
-config/
-└── otp.php                              # OTP configuration (length, expiration, attempts)
-
-resources/
-└── views/
-    └── emails/
-        └── otp.blade.php                # Professional OTP email template
+┌─────────────┐      ┌──────────────┐      ┌─────────────┐      ┌──────────┐
+│   Client    │─────▶│  Controller  │─────▶│  Service    │─────▶│  Model   │
+│  (Postman)  │      │ (HTTP Layer) │      │  (Business  │      │  (Data)  │
+└─────────────┘      └──────────────┘      │   Logic)    │      └──────────┘
+                            │               └─────────────┘            │
+                            ▼                      │                   │
+                     ┌──────────────┐             │                   │
+                     │  Form        │             │                   │
+                     │  Request     │             ▼                   │
+                     │ (Validation) │      ┌─────────────┐            │
+                     └──────────────┘      │  Repository │            │
+                            │               │  /Helper    │            │
+                            ▼               │  Services   │            │
+                     ┌──────────────┐      └─────────────┘            │
+                     │  Policy      │◀────────────────────────────────┘
+                     │(Authorization)│
+                     └──────────────┘
+                            │
+                            ▼
+                     ┌──────────────┐
+                     │  Resource    │
+                     │  (JSON       │
+                     │  Formatting) │
+                     └──────────────┘
 ```
 
-## 🔐 API Endpoints
+### Key Architectural Components
 
-### Authentication
+#### 1. **Controllers** (HTTP Layer)
+- Handle HTTP requests and responses only
+- Delegate business logic to Services
+- Return API Resources for consistent JSON formatting
+- Example: `PostController` calls `PostService` methods
 
--   `POST /api/register` - Register new user
--   `POST /api/login` - Login user
--   `POST /api/logout` - Logout user (requires authentication)
+#### 2. **Services** (Business Logic Layer)
+Implemented Services:
+- **PostService** - CRUD operations for posts with media handling
+- **CommentService** - Comment management and pagination
+- **ProfileService** - User profile updates with avatar uploads
+- **MediaService** - File upload, replacement, and deletion (injected as dependency)
+- **CategoryService** - Category creation with automatic slug generation
+- **TagService** - Tag management and slug generation
+- **LikeService** - Toggle like functionality
+- **AuthServices** - RegisterService, LoginService, VerificationService
 
-### Email Verification
+#### 3. **Form Requests** (Validation Layer)
+- `registerRequest` - User registration validation
+- `PostRequest` - Post creation/update validation
+- `UpdateProfileRequest` - Profile update with custom uniqueness rules
+- `StoreCategoryRequest` / `StoreTagRequest` - Resource validation
 
-#### Web Verification (Email Link)
--   `GET /api/email/verify/{id}/{hash}` - Verify email via signed link (from email)
--   `POST /api/email/resend` - Resend verification email (requires authentication)
--   `POST /api/email/verification-notification` - Alternative resend endpoint (requires authentication)
+#### 4. **Policies** (Authorization Layer)
+- **PostPolicy** - Only owners can update/delete their posts (admin bypass)
+- **CommentPolicy** - Owner-based authorization for comments (admin bypass)
+- **CategoryPolicy** - Admin-only category creation
+- **UserPolicy** - Self-resource management rules
 
-#### Mobile Verification (OTP)
--   `POST /api/mobile/verify` - Verify email with 6-digit OTP code (requires authentication)
-    -   Body: `{ "code": "123456" }`
--   `POST /api/mobile/resend` - Resend OTP code to email (requires authentication)
+#### 5. **API Resources** (Transformation Layer)
+- `PostResource` - Formats posts with author, like count, formatted dates
+- `CommentResource` - Formats comments with human-readable timestamps
+- `ProfileResource` - Includes avatar URLs and relative time formatting
+- `CategoryResource` / `TagResource` - Consistent slug-based responses
 
-### Posts (All require authentication and email verification)
+---
 
--   `GET /api/posts` - Get all posts
--   `POST /api/posts` - Create new post
--   `GET /api/posts/{id}` - Get specific post
--   `PUT /api/posts/{id}` - Update post (owner only)
--   `DELETE /api/posts/{id}` - Delete post (owner only)
+## 🗄️ Database Schema
 
-### Comments (All require authentication and email verification)
+### Entity Relationship Diagram
 
--   `GET /api/posts/{post}/comments` - Get all comments for a post
--   `POST /api/posts/{post}/comments` - Create comment on post
--   `GET /api/comments/{id}` - Get specific comment
--   `PUT /api/comments/{id}` - Update comment (owner only)
--   `DELETE /api/comments/{id}` - Delete comment (owner only)
+```
+┌──────────────┐         ┌──────────────┐         ┌──────────────┐
+│    Users     │         │  Categories  │         │     Tags     │
+├──────────────┤         ├──────────────┤         ├──────────────┤
+│ id (PK)      │         │ id (PK)      │         │ id (PK)      │
+│ name         │         │ name         │         │ name         │
+│ email        │         │ slug         │         │ slug         │
+│ password     │         └──────────────┘         └──────────────┘
+│ role         │                │                         │
+│ otp_code     │                │                         │
+└──────────────┘                │                         │
+       │                        │                         │
+       │ 1:1                    │                         │
+       ▼                        │ 1:N                     │ M:N
+┌──────────────┐                │                         │
+│UserProfiles  │                │                         │
+├──────────────┤                │                         │
+│ id (PK)      │                │                         │
+│ user_id (FK) │                │                         │
+│ username     │                │                         │
+│ bio          │                │                         │
+│ avatar       │                │                         │
+│ website      │                │                         │
+└──────────────┘                │                         │
+                                │                         │
+┌──────────────┐                │                         │
+│    Posts     │◀───────────────┘                         │
+├──────────────┤                                          │
+│ id (PK)      │◀─────────────────────────────────────────┘
+│ user_id (FK) │─────┐     (via post_tag pivot table)
+│ category_id  │     │
+│ content      │     │ 1:N
+│ image        │     │
+└──────────────┘     │
+       │             │
+       │ 1:N         │
+       ▼             ▼
+┌──────────────┐  ┌──────────────┐
+│  Comments    │  │    Likes     │
+├──────────────┤  ├──────────────┤
+│ id (PK)      │  │ id (PK)      │
+│ user_id (FK) │  │ user_id (FK) │
+│ post_id (FK) │  │ post_id (FK) │
+│ content      │  └──────────────┘
+└──────────────┘
+```
 
-### Likes (Requires authentication and email verification)
+### Relationships Explained
 
--   `POST /api/posts/{post}/like` - Toggle like/unlike on post
+#### One-to-One
+- **User ↔ UserProfile** - Each user has exactly one profile
 
-### Users (Requires authentication and email verification)
+#### One-to-Many
+- **User → Posts** - A user can create multiple posts
+- **User → Comments** - A user can write multiple comments
+- **Category → Posts** - A category contains multiple posts
+- **Post → Comments** - A post can have multiple comments
 
--   `GET /api/users` - Get all users
--   `GET /api/users/{id}` - Get specific user
--   `PUT /api/users/{id}` - Update user (owner only)
--   `DELETE /api/users/{id}` - Delete user (owner only)
+#### Many-to-Many
+- **Posts ↔ Tags** - Posts can have multiple tags, tags can belong to multiple posts (via `post_tag` pivot table)
+- **Users ↔ Posts (Likes)** - Users can like multiple posts, posts can be liked by multiple users (via `likes` table with unique constraint)
 
-## 📚 API Documentation with Scramble
+### Key Database Features
 
-This project uses **Scramble** for automatic API documentation generation. Scramble reads your code and generates beautiful, interactive OpenAPI documentation.
+- **Foreign Key Constraints** - Cascade deletes for referential integrity
+- **Unique Constraints** - Email, username, category/tag slugs
+- **Nullable Foreign Keys** - Category is optional for posts (set null on delete)
+- **Pivot Tables** - `post_tag` for many-to-many tag relationships
+- **Automatic Timestamps** - `created_at` and `updated_at` on all tables
+- **OTP System** - OTP code, expiration, and attempt tracking for mobile verification
 
-### Accessing Documentation
+---
 
-Visit `/docs/api` on your application to view the interactive API documentation.
-
-### Features:
-
--   **Auto-generated**: Documentation is generated from controllers, requests, and models
--   **Interactive**: Try out endpoints directly from the documentation
--   **Authentication Support**: Built-in bearer token authentication for testing
--   **Type-safe**: Uses PHP types and docblocks for accurate documentation
-
-## 🚦 Getting Started
+## 🔧 Installation & Setup
 
 ### Prerequisites
 
--   PHP 8.2 or higher
--   Composer
--   MySQL/PostgreSQL
+- PHP >= 8.2
+- Composer
+- MySQL >= 8.0
+- Node.js & npm (for frontend/documentation)
+- Git
 
-### Installation
+### Step-by-Step Installation
 
-1. Clone the repository
-
+#### 1. Clone the Repository
 ```bash
-git clone <repository-url>
-cd socialhub
+git clone https://github.com/YourUsername/socialhub-api.git
+cd socialhub-api
 ```
 
-2. Install dependencies
-
+#### 2. Install Dependencies
 ```bash
 composer install
 ```
 
-3. Copy environment file
-
+#### 3. Environment Configuration
 ```bash
+# Copy the environment file
 cp .env.example .env
-```
 
-4. Generate application key
-
-```bash
+# Generate application key
 php artisan key:generate
 ```
 
-5. Configure your database in `.env`
-
+#### 4. Configure Database
+Edit your `.env` file with your database credentials:
 ```env
 DB_CONNECTION=mysql
 DB_HOST=127.0.0.1
@@ -196,196 +251,292 @@ DB_USERNAME=your_username
 DB_PASSWORD=your_password
 ```
 
-6. Run migrations
-
-```bash
-php artisan migrate
-```
-
-7. Configure OTP settings (optional) in `.env`
-
-```env
-OTP_LENGTH=6              # OTP code length (default: 6)
-OTP_EXPIRATION=10         # Minutes until OTP expires (default: 10)
-OTP_MAX_ATTEMPTS=5        # Max verification attempts (default: 5)
-```
-
-8. Configure mail settings in `.env` for email verification
-
+#### 5. Configure Email (For Verification)
+Add your mail configuration to `.env`:
 ```env
 MAIL_MAILER=smtp
 MAIL_HOST=smtp.mailtrap.io
 MAIL_PORT=2525
-MAIL_USERNAME=your_username
-MAIL_PASSWORD=your_password
+MAIL_USERNAME=your_mailtrap_username
+MAIL_PASSWORD=your_mailtrap_password
 MAIL_ENCRYPTION=tls
 MAIL_FROM_ADDRESS=noreply@socialhub.com
-MAIL_FROM_NAME="${APP_NAME}"
+MAIL_FROM_NAME="SocialHub"
 ```
 
-9. (Optional) Seed database with test data
-
+#### 6. Run Migrations
 ```bash
+# Create database tables
+php artisan migrate
+
+# (Optional) Seed sample data
 php artisan db:seed
 ```
 
-10. Start development server
+#### 7. Create Storage Symlink
+```bash
+# Link public storage for uploaded files
+php artisan storage:link
+```
 
+#### 8. Start Development Server
 ```bash
 php artisan serve
 ```
 
-11. (Optional) Start queue worker for processing OTP emails
+Your API will be available at `http://127.0.0.1:8000`
 
+#### 9. View API Documentation
 ```bash
-php artisan queue:work
+# Generate API documentation (Scramble)
+php artisan scramble:generate
+
+# Access at: http://127.0.0.1:8000/docs/api
 ```
 
-### View API Documentation
+---
 
-Navigate to `http://localhost:8000/docs/api` to view the interactive API documentation.
+## 📡 API Endpoints
+
+### Authentication Endpoints
+
+| Method | Endpoint | Description | Auth Required |
+|--------|----------|-------------|---------------|
+| `POST` | `/api/register` | Register a new user account | ❌ |
+| `POST` | `/api/login` | Login and receive authentication token | ❌ |
+| `POST` | `/api/logout` | Logout and revoke current token | ✅ |
+| `GET` | `/api/email/verify/{id}/{hash}` | Verify email from link (sent via email) | ❌ |
+| `POST` | `/api/email/verification-notification` | Resend email verification link | ✅ |
+| `POST` | `/api/mobile/verify` | Verify email using OTP code (mobile) | ✅ |
+| `POST` | `/api/mobile/resend` | Resend OTP code for mobile verification | ✅ |
+
+**Authentication Notes:**
+- All endpoints except registration and login require `Authorization: Bearer {token}` header
+- Most endpoints require email verification (`verified` middleware)
+- Tokens are generated using Laravel Sanctum
+
+---
+
+### Post Management
+
+| Method | Endpoint | Description | Authorization |
+|--------|----------|-------------|---------------|
+| `GET` | `/api/posts` | Get all posts (paginated, 10 per page) | Public |
+| `POST` | `/api/posts` | Create a new post | Authenticated + Verified |
+| `GET` | `/api/posts/{id}` | Get specific post by ID | Public |
+| `PUT` | `/api/posts/{id}` | Update post | Owner only |
+| `DELETE` | `/api/posts/{id}` | Delete post | Owner or Admin |
+| `POST` | `/api/posts/{id}/like` | Toggle like on post | Authenticated + Verified |
+
+**Post Request Body (Create/Update):**
+```json
+{
+  "content": "Your post content here",
+  "category_id": 1,
+  "image": "file upload (optional)",
+  "tags": [1, 2, 3]
+}
+```
+
+**Post Response Example:**
+```json
+{
+  "data": {
+    "id": 1,
+    "post_content": "Amazing Laravel project!",
+    "author": {
+      "id": 5,
+      "name": "John Doe"
+    },
+    "count_like": 12,
+    "posted_at": "2026-02-15"
+  }
+}
+```
+
+---
+
+### Comment Management
+
+| Method | Endpoint | Description | Authorization |
+|--------|----------|-------------|---------------|
+| `GET` | `/api/posts/{post}/comments` | Get comments for a post | Public |
+| `POST` | `/api/posts/{post}/comments` | Create comment on post | Authenticated + Verified |
+| `GET` | `/api/comments/{id}` | Get specific comment | Public |
+| `PUT` | `/api/comments/{id}` | Update comment | Owner or Admin |
+| `DELETE` | `/api/comments/{id}` | Delete comment | Owner or Admin |
+
+**Comment Request Body:**
+```json
+{
+  "content": "Great post!"
+}
+```
+
+**Comment Response Example:**
+```json
+{
+  "data": {
+    "id": 1,
+    "content": "Great post!",
+    "author": "John Doe",
+    "commented_at": "2026-02-15 14:30"
+  }
+}
+```
+
+---
+
+### User & Profile Management
+
+| Method | Endpoint | Description | Authorization |
+|--------|----------|-------------|---------------|
+| `GET` | `/api/users` | Get all users | Public |
+| `GET` | `/api/users/{id}` | Get specific user | Public |
+| `PUT` | `/api/users/{id}` | Update user | Owner only |
+| `DELETE` | `/api/users/{id}` | Delete user | Owner only |
+| `GET` | `/api/user` | Get current authenticated user | Authenticated |
+| `GET` | `/api/profile` | Get authenticated user's profile | Authenticated + Verified |
+| `POST` | `/api/profile` | Update authenticated user's profile | Authenticated + Verified |
+
+**Profile Update Request Body:**
+```json
+{
+  "username": "johndoe",
+  "bio": "Laravel enthusiast and backend developer",
+  "website": "https://johndoe.com",
+  "avatar": "file upload (jpeg, png, jpg, gif, max 2MB)"
+}
+```
+
+**Profile Response Example:**
+```json
+{
+  "data": {
+    "username": "johndoe",
+    "bio": "Laravel enthusiast and backend developer",
+    "avatar_url": "http://localhost:8000/storage/avatars/avatar123.jpg",
+    "website": "https://johndoe.com",
+    "updated_at": "2 hours ago"
+  }
+}
+```
+
+---
+
+### Category Management
+
+| Method | Endpoint | Description | Authorization |
+|--------|----------|-------------|---------------|
+| `GET` | `/api/categories` | Get all categories | Public |
+| `POST` | `/api/categories` | Create new category | **Admin Only** |
+
+**Category Request Body:**
+```json
+{
+  "name": "Technology"
+}
+```
+
+**Category Response Example:**
+```json
+{
+  "data": {
+    "id": 1,
+    "name": "Technology",
+    "slug": "technology"
+  }
+}
+```
+
+---
+
+### Tag Management
+
+| Method | Endpoint | Description | Authorization |
+|--------|----------|-------------|---------------|
+| `GET` | `/api/tags` | Get all tags | Public |
+| `POST` | `/api/tags` | Create new tag | Authenticated + Verified |
+
+**Tag Request Body:**
+```json
+{
+  "name": "Laravel"
+}
+```
+
+**Tag Response Example:**
+```json
+{
+  "data": {
+    "id": 1,
+    "name": "Laravel",
+    "slug": "laravel"
+  }
+}
+```
+
+---
 
 ## 🧪 Testing
 
-Run the test suite using Pest:
+This project uses **Pest PHP** for testing.
 
 ```bash
 # Run all tests
 php artisan test
 
-# Run specific test file
-php artisan test --filter=PostTest
+# Run specific test suite
+php artisan test --testsuite=Feature
 
-# Run with coverage
+# Run tests with coverage
 php artisan test --coverage
 ```
 
-## 🔑 Authentication Flow
+---
 
-### Registration & Email Verification
+## 📚 Technologies Used
 
-1. **Register**: Send POST request to `/api/register` with name, email, and password
-2. **Receive Token**: Get authentication token in response
-3. **Verify Email** (Choose one method):
-   
-   **Option A: Web Verification (Email Link)**
-   - Check your email inbox
-   - Click the verification link
-   - Email is verified automatically
-   
-   **Option B: Mobile App (OTP)**
-   - Request OTP: System sends 6-digit code to your email
-   - Submit code: POST to `/api/mobile/verify` with the code
-   - Code valid for 10 minutes with max 5 attempts
-   - Request new code if needed via `/api/mobile/resend`
+| Category | Technology |
+|----------|------------|
+| **Framework** | Laravel 12 |
+| **Language** | PHP 8.2+ |
+| **Database** | MySQL 8.0 |
+| **Authentication** | Laravel Sanctum |
+| **Validation** | Form Request Classes |
+| **Testing** | Pest PHP |
+| **Documentation** | Dedoc Scramble |
+| **Architecture** | Service Layer Pattern, Repository Pattern |
+| **Design Patterns** | Dependency Injection, Policy Pattern, Resource Pattern |
 
-4. **Access Protected Routes**: Use token to access all authenticated endpoints (requires verified email)
-5. **Logout**: Send POST to `/api/logout` to revoke token
+---
 
-### Email Verification Security Features
+## 👥 Credits & Acknowledgments
 
-- **Hashed OTP Storage**: OTP codes stored as SHA-256 hashes in database
-- **Attempt Limiting**: Maximum 5 verification attempts per OTP code
-- **Expiration**: OTP codes expire after 10 minutes
-- **Rate Limiting**: Verification endpoints throttled to 6 requests/minute
-- **Signed URLs**: Web verification links use Laravel's signed URL feature
-- **Queued Emails**: OTP emails processed in background for better performance
+This project was developed as part of the **Intensive Backend Development Training Program** at **Botfi Company**.
 
-## 📝 Example Usage
+### Special Thanks
 
-### Register User
+**Instructor**: [Omar Baflah](https://github.com/omerbaflah)
+*Senior Backend Developer & Technical Mentor*
 
-```bash
-curl -X POST http://localhost:8000/api/register \
-  -H "Content-Type: application/json" \
-  -d '{
-    "name": "John Doe",
-    "email": "john@example.com",
-    "password": "password123",
-    "password_confirmation": "password123"
-  }'
-```
+Omar's expert guidance in Laravel best practices, clean architecture principles, and professional development workflows made this project possible. His dedication to teaching industry-standard patterns and attention to code quality has been invaluable throughout this learning journey.
 
-### Login
+**Training Program**: Botfi Company
+*For providing a comprehensive, hands-on learning environment*
 
-```bash
-curl -X POST http://localhost:8000/api/login \
-  -H "Content-Type: application/json" \
-  -d '{
-    "email": "john@example.com",
-    "password": "password123"
-  }'
-```
-
-### Create Post (with authentication)
-
-```bash
-curl -X POST http://localhost:8000/api/posts \
-  -H "Content-Type: application/json" \
-  -H "Authorization: Bearer YOUR_TOKEN_HERE" \
-  -d '{
-    "content": "My first post!"
-  }'
-```
-
-### Verify Email with OTP (Mobile)
-
-```bash
-# Request OTP code (sent to email)
-curl -X POST http://localhost:8000/api/mobile/resend \
-  -H "Authorization: Bearer YOUR_TOKEN_HERE"
-
-# Verify with OTP code
-curl -X POST http://localhost:8000/api/mobile/verify \
-  -H "Content-Type: application/json" \
-  -H "Authorization: Bearer YOUR_TOKEN_HERE" \
-  -d '{
-    "code": "123456"
-  }'
-```
-
-## ⚙️ Configuration
-
-### OTP Settings
-
-Configure OTP behavior in `config/otp.php` or via environment variables:
-
-```php
-return [
-    'length' => env('OTP_LENGTH', 6),           // OTP code length
-    'expiration' => env('OTP_EXPIRATION', 10),  // Minutes until expiration
-    'max_attempts' => env('OTP_MAX_ATTEMPTS', 5), // Maximum verification attempts
-];
-```
-
-### Queue Configuration
-
-For production, configure a proper queue driver in `.env`:
-
-```env
-QUEUE_CONNECTION=redis  # or database, sqs, etc.
-```
-
-Run the queue worker:
-
-```bash
-php artisan queue:work --tries=3
-```
-
-## 🤝 Contributing
-
-Feel free to submit issues and pull requests.
+---
 
 ## 📄 License
 
-This project is open-sourced software licensed under the MIT license.
+This project is open-sourced software licensed under the [MIT license](LICENSE).
 
-In order to ensure that the Laravel community is welcoming to all, please review and abide by the [Code of Conduct](https://laravel.com/docs/contributions#code-of-conduct).
+---
 
-## Security Vulnerabilities
+<div align="center">
 
-If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell via [taylor@laravel.com](mailto:taylor@laravel.com). All security vulnerabilities will be promptly addressed.
+**Built with ❤️ using Laravel**
 
-## License
+*Final Project - Botfi Training Program 2026*
 
-The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+</div>

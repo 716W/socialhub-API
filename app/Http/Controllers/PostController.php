@@ -5,12 +5,13 @@ namespace App\Http\Controllers;
 use App\Http\Requests\PostRequest;
 use App\Http\Resources\PostResource;
 use App\Models\Post;
+use App\Services\MediaService;
 use App\Services\PostService;
 use Illuminate\Support\Facades\Auth;
 
 class PostController extends Controller
 {
-    public function __construct(protected PostService $postService)
+    public function __construct(protected PostService $postService , protected MediaService $mediaService)
     {
         
     }
