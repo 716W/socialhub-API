@@ -13,8 +13,8 @@ class TagController extends Controller
 
     public function index()
     {
-        $this->successResponse(
-            new TagResource($this->tagService->getAllTags()),
+        return $this->successResponse(
+            TagResource::collection($this->tagService->getAllTags()),
             'Tags retrieved successfully'
         );
     }
