@@ -29,7 +29,7 @@ class ProfileTest extends TestCase
 
         // 3. التحقق من النتيجة (Assert)
         $response->assertStatus(200)
-                 ->assertJsonPath('data.profile.username', 'ali_dev'); // تأكد أن الرد يحوي الاسم
+                 ->assertJsonPath('data.username', 'ali_dev'); // تأكد أن الرد يحوي الاسم
 
         // 4. التحقق من الداتا بيس
         $this->assertDatabaseHas('user_profiles', [
