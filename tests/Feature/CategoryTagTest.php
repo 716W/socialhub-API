@@ -16,13 +16,14 @@ it('can list all categories', function () {
 
     // Assert
     $response->assertStatus(200)
-        ->assertJsonCount(3);
+        ->assertJsonCount(3, 'data');
 });
 
 it('can create a category when authenticated and verified', function () {
     // Arrange
     $user = User::factory()->create([
         'email_verified_at' => now(),
+        'role' => 'admin',
     ]);
 
     // Act
@@ -33,8 +34,10 @@ it('can create a category when authenticated and verified', function () {
     // Assert
     $response->assertStatus(201)
         ->assertJson([
-            'name' => 'New Category',
-            'slug' => 'new-category',
+            'data' => [
+                'name' => 'New Category',
+                'slug' => 'new-category',
+            ]
         ]);
 
     $this->assertDatabaseHas('categories', [
@@ -80,13 +83,14 @@ it('can list all tags', function () {
 
     // Assert
     $response->assertStatus(200)
-        ->assertJsonCount(3);
+        ->assertJsonCount(3, 'data');
 });
 
 it('can create a tag when authenticated and verified', function () {
     // Arrange
     $user = User::factory()->create([
         'email_verified_at' => now(),
+        'role' => 'admin',
     ]);
 
     // Act
@@ -97,8 +101,10 @@ it('can create a tag when authenticated and verified', function () {
     // Assert
     $response->assertStatus(201)
         ->assertJson([
-            'name' => 'New Tag',
-            'slug' => 'new-tag',
+            'data' => [
+                'name' => 'New Tag',
+                'slug' => 'new-tag',
+            ]
         ]);
 
     $this->assertDatabaseHas('tags', [
