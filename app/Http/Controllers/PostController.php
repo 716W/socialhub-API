@@ -44,6 +44,7 @@ class PostController extends Controller
      * @response 201 {"data": {"id": 1, "content": "My new post", "user_id": 1, "created_at": "2026-01-10T12:00:00.000000Z", "updated_at": "2026-01-10T12:00:00.000000Z"}}
      * @response 422 {"message": "Validation errors", "errors": {"content": ["The content field is required."]}}
      */
+    
     public function store(PostRequest $request)
     {
         $data = $this->postService->CreatePost(
