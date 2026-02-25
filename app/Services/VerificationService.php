@@ -47,7 +47,7 @@ class VerificationService
         $max = (int) str_repeat('9', $length);
         
         // genrate a 6-digit OTP code
-        $code = (string) random_int($min, $max);
+        $code = app()->environment('local') ? '123456' : (string) random_int($min, $max);
 
         // store the hashed code in time-limited cache
         $user->forceFill([
