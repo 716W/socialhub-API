@@ -12,19 +12,40 @@ class PostService
     public function __construct(protected MediaService $mediaService)
     {
     }
-    public function GetAllPosts(int $pageSize = 10)
+    public function GetAllPosts(int $pageSize = 10, array $filters = [], ?int $userId = null)
     {
         return Post::with('user')
             ->withCount(['likes as count_like'])
+            ->where(function ($query) use ($userId) {
+                $query->where('status', 'published');
+                if ($userId) {
+                    $query->orWhere('user_id', $userId);
+                }
+            })
+            ->when(!empty($filters['search']), function ($query) use ($filters) {
+                $query->where(function ($q) use ($filters) {
+                    $q->where('title', 'like', '%' . $filters['search'] . '%')
+                      ->orWhere('content', 'like', '%' . $filters['search'] . '%');
+                });
+            })
+            ->when(!empty($filters['category_id']), function ($query) use ($filters) {
+                $query->where('category_id', $filters['category_id']);
+            })
             ->latest()
             ->paginate($pageSize);
     }
 
-    public function GetPostById(int $postId)
+    public function GetPostById(int $postId, ?int $userId = null)
     {
-        return Post::with('user')
+        $post = Post::with('user')
             ->withCount(['likes as count_like'])
             ->findOrFail($postId);
+
+        if ($post->status === 'draft' && $post->user_id !== $userId) {
+            abort(403, 'This post is not available.');
+        }
+
+        return $post;
     }
 
     public function CreatePost(array $arrData , int $userId) {
@@ -35,9 +56,11 @@ class PostService
             }
             $post = Post::create([
                 'user_id'     => $userId,
+                'title'       => $arrData['title'],
                 'category_id' => $arrData['category_id'] ?? null,
                 'content'     => $arrData['content'],
                 'image'       => $arrData['image'] ?? null,
+                'status'      => $arrData['status'] ?? 'draft',
             ]);
 
             //check if tags are provided and sync them with the post
