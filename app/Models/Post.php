@@ -4,17 +4,37 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\SoftDeletes;
+use Illuminate\Support\Str;
 
 class Post extends Model
 {
-    use HasFactory;
+    use HasFactory, SoftDeletes;
 
     protected $fillable = [
+        'title',
+        'slug',
+        'status',
         'content',
         'user_id',
         'category_id',
-        'image'
+        'image',
     ];
+
+    protected static function booted(): void
+    {
+        static::creating(function (Post $post) {
+            if (! $post->slug) {
+                $post->slug = Str::slug($post->title);
+            }
+        });
+
+        static::updating(function (Post $post) {
+            if ($post->isDirty('title')) {
+                $post->slug = Str::slug($post->title);
+            }
+        });
+    }
 
     // Relationships :-
     public function user()
