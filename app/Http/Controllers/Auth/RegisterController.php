@@ -34,6 +34,6 @@ class RegisterController extends Controller
             $request->validated('password'),
         );
 
-        return response()->json($data, 201);
+        return $this->createResponse($data, 'User registered successfully');
     }
 }
