@@ -15,8 +15,12 @@ it('can register a new user', function () {
 
     $response->assertStatus(201)
         ->assertJsonStructure([
-            'user' => ['id', 'name', 'email'],
-            'token'
+            'success',
+            'message',
+            'data' => [
+                'user' => ['id', 'name', 'email'],
+                'token',
+            ],
         ]);
 
     $this->assertDatabaseHas('users', [
