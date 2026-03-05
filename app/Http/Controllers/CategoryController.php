@@ -5,12 +5,11 @@ namespace App\Http\Controllers;
 use App\Http\Requests\StoreCategoryRequest;
 use App\Models\Category;
 use App\Services\CategoryService;
-use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Gate;
 
 class CategoryController extends Controller
 {
-    use AuthorizesRequests;
     public function __construct(protected CategoryService $categoryService)
     {}
     public function index()
@@ -22,7 +21,7 @@ class CategoryController extends Controller
     }
     public function store(StoreCategoryRequest $request)
     {
-        $this->authorize('create', Category::class);
+        Gate::authorize('create', Category::class);
         return $this->createResponse(
             $this->categoryService->createCategory($request->validated()),
             'Category created successfully'

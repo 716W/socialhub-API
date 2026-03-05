@@ -15,7 +15,7 @@ it('can list users when authenticated and verified', function () {
     $response->assertStatus(200)
         ->assertJsonStructure([
             'data' => [
-                '*' => ['id', 'Name', 'Email']
+                '*' => ['id', 'name', 'email']
             ]
         ]);
 });
@@ -39,7 +39,7 @@ it('can update a user', function () {
     ]);
 
     $response->assertStatus(200)
-        ->assertJsonPath('data.Name', 'Updated Name');
+        ->assertJsonPath('data.name', 'Updated Name');
 
     $this->assertDatabaseHas('users', [
         'id' => $user->id,

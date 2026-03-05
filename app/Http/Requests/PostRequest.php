@@ -21,9 +21,16 @@ class PostRequest extends FormRequest
      */
     public function rules(): array
     {
+        $isUpdate = $this->isMethod('PUT') || $this->isMethod('PATCH');
+
         return [
-            'content' => 'required|string|max:255',
-            'image'   => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
+            'title'       => ($isUpdate ? 'sometimes|' : '') . 'required|string|max:255',
+            'content'     => ($isUpdate ? 'sometimes|' : '') . 'required|string',
+            'image'       => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
+            'category_id' => 'nullable|exists:categories,id',
+            'tags'        => 'nullable|array',
+            'tags.*'      => 'exists:tags,id',
+            'status'      => 'nullable|in:draft,published',
         ];
     }
 }

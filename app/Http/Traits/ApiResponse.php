@@ -2,90 +2,70 @@
 
 namespace App\Http\Traits;
 
-use Illuminate\Http\JsonResponse ;
+use Illuminate\Http\JsonResponse;
 
 trait ApiResponse
 {
     /**
-     * Success Response
+     * 200 – Generic success
      */
-    protected function successResponse($data = null ,string $message = 'Success' , int $statusCode = 200) : JsonResponse
+    protected function successResponse($data = null, string $message = 'Success', int $statusCode = 200): JsonResponse
     {
         return response()->json([
-            'success'   => true ,
-            'message'   => $message ,
-            'data'      => $data ,
+            'success'   => true,
+            'message'   => $message,
+            'data'      => $data,
             'timestamp' => now()->toIso8601String(),
-        ] , $statusCode);
+        ], $statusCode);
     }
 
     /**
-     * Error Response
+     * 201 – Resource created
      */
-
-    protected function errorResponse(string $message , int $statusCode = 400 , $errors = null)
+    protected function createResponse($data, string $message = 'Resource created successfully'): JsonResponse
     {
-        $response = [
-            'success' => false , 
-            'message' => $message ,
-            'timestamp' => now()->toIso8601String(),
-        ];
-
-        if ($errors) {
-            $response['errors'] = $errors;
-        }
-        return response()->json($response , $statusCode);
+        return $this->successResponse($data, $message, 201);
     }
 
     /**
-     * paginated response 
+     * 4xx / 5xx – Error (use the global exception handler for automatic cases;
+     * call this directly only when you need a manual error response inside a controller)
      */
-
-    protected function paginatedResponse($paginator , string $message = 'Success')
+    protected function errorResponse(string $message, int $statusCode = 400, array $errors = []): JsonResponse
     {
         return response()->json([
-            'success' => true ,
-            'message' => $message ,
-            'data'    => $paginator->items(),
-            'meta'    => [
-                'current_page' => $paginator->currentPage() ,
-                'last_page'    => $paginator->lastPage() ,
-                'per_page'     => $paginator->perPage() ,
-                'total'        => $paginator->total() ,
-                'form'         => $paginator->firstItem(),
+            'success'   => false,
+            'message'   => $message,
+            'errors'    => $errors ?: null,
+            'timestamp' => now()->toIso8601String(),
+        ], $statusCode);
+    }
+
+    /**
+     * Paginated collection response
+     */
+    protected function paginatedResponse($paginator, string $message = 'Success'): JsonResponse
+    {
+        return response()->json([
+            'success'   => true,
+            'message'   => $message,
+            'data'      => $paginator->items(),
+            'meta'      => [
+                'current_page' => $paginator->currentPage(),
+                'last_page'    => $paginator->lastPage(),
+                'per_page'     => $paginator->perPage(),
+                'total'        => $paginator->total(),
+                'from'         => $paginator->firstItem(),
                 'to'           => $paginator->lastItem(),
             ],
-            'links' => [
+            'links'     => [
                 'first' => $paginator->url(1),
                 'last'  => $paginator->url($paginator->lastPage()),
                 'prev'  => $paginator->previousPageUrl(),
-                'next'  => $paginator->nextPageUrl(), 
+                'next'  => $paginator->nextPageUrl(),
             ],
             'timestamp' => now()->toIso8601String(),
-        ] , 200);
-    }
-
-    /**
-     * Resource created response 
-     */
-
-    protected function createResponse($data , string $message = 'Resource Created Successfully')
-    {
-        return $this->successResponse($data , $message,201);
-    }
-
-    /**
-     * No content response 
-     */
-
-    protected function noContentResponse(string $message = 'Resource deleted successfully')
-    {
-        return response()->json([
-            'success' => true , 
-            'message' => $message ,
-            'timestamp' => now()->toIso8601String(),
-        ] , 200);
+        ], 200);
     }
 }
-
 

@@ -31,10 +31,7 @@ class LoginController extends Controller
         );
 
         // return response :-
-        return response()->json([
-            'message' => 'Login Successful',
-            'data' => $result 
-        ] , 200);
+        return $this->successResponse($result, 'Login Successful');
 
     }
 }

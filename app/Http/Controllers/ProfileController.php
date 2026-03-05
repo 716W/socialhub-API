@@ -4,9 +4,9 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\UpdateProfileRequest;
 use App\Http\Resources\ProfileResource;
+use App\Http\Resources\UserResource;
 use App\Services\MediaService;
 use App\Services\ProfileServie;
-use GrahamCampbell\ResultType\Success;
 use Illuminate\Http\Request;
 
 class ProfileController extends Controller
@@ -17,9 +17,9 @@ class ProfileController extends Controller
      */
     public function show(Request $request)
     {
-        $user = $this->profileService->getProfile($request->user());
+        $user = $request->user()->load('profile');
         return $this->successResponse(
-            new ProfileResource($user->profile),
+            new UserResource($user),
         );
     }
     public function update(UpdateProfileRequest $request)

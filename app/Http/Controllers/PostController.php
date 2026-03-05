@@ -7,6 +7,7 @@ use App\Http\Resources\PostResource;
 use App\Models\Post;
 use App\Services\MediaService;
 use App\Services\PostService;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
 class PostController extends Controller
@@ -24,9 +25,13 @@ class PostController extends Controller
      * @tag Posts
      * @response 200 {"data": [{"id": 1, "content": "Sample post", "user_id": 1, "created_at": "2026-01-10T12:00:00.000000Z", "updated_at": "2026-01-10T12:00:00.000000Z"}]}
      */
-    public function index()
+    public function index(Request $request)
     {
-        $posts = $this->postService->GetAllPosts();
+        $posts = $this->postService->GetAllPosts(
+            10,
+            $request->only(['search', 'category_id']),
+            Auth::id()
+        );
 
         // Transform paginated items to resource arrays so pagination helper can wrap them
         $posts->getCollection()->transform(fn ($post) => (new PostResource($post))->toArray(request()));
@@ -66,7 +71,7 @@ class PostController extends Controller
      */
     public function show(string $id)
     {
-        $post = $this->postService->GetPostById($id);
+        $post = $this->postService->GetPostById($id, Auth::id());
 
         return $this->successResponse(new PostResource($post), 'Post retrieved successfully');
     }
