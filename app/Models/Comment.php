@@ -10,9 +10,14 @@ class Comment extends Model
     use HasFactory ;
 
     protected $fillable = [
-        'content' ,
-        'user_id' ,
-        'post_id' ,
+        'content',
+        'user_id',
+        'post_id',
+        'is_approved',
+    ];
+
+    protected $casts = [
+        'is_approved' => 'boolean',
     ];
 
     public function user(){
