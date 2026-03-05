@@ -18,9 +18,20 @@ class PostFactory extends Factory
     public function definition(): array
     {
         return [
+            'title'   => fake()->sentence(6),
             'content' => fake()->paragraph(3),
-            // Add other fields as necessary
+            'status'  => 'published',
             'user_id' => User::factory(),
         ];
+    }
+
+    public function draft(): static
+    {
+        return $this->state(fn () => ['status' => 'draft']);
+    }
+
+    public function published(): static
+    {
+        return $this->state(fn () => ['status' => 'published']);
     }
 }
