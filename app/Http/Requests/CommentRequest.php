@@ -3,7 +3,6 @@
 namespace App\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
-use Laravel\Prompts\Note;
 
 class CommentRequest extends FormRequest
 {
