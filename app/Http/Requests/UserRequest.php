@@ -24,17 +24,12 @@ class UserRequest extends FormRequest
         // Get the user ID from the route if available (for update scenarios)
         $userId = $this->route('user');
 
-        $rules = [
-            'name'     => 'required|string|max:255',
-            'email'    => 'required|email|unique:users,email' . ($userId ? ",$userId" : ''),
-            'password' => 'required|string|min:5|confirmed',
+        $isUpdate = $this->isMethod('put') || $this->isMethod('patch');
+
+        return [
+            'name'     => ($isUpdate ? 'sometimes|' : '') . 'required|string|max:255',
+            'email'    => ($isUpdate ? 'sometimes|' : '') . 'required|email|unique:users,email' . ($userId ? ",{$userId}" : ''),
+            'password' => $isUpdate ? 'nullable|string|min:5|confirmed' : 'required|string|min:5|confirmed',
         ];
-
-        // If it's an update request (PUT/PATCH), make password optional
-        if ($this->isMethod('put') || $this->isMethod('patch')) {
-            $rules['password'] = 'nullable|string|min:5|confirmed';
-        }
-
-        return $rules;
     }
 }
