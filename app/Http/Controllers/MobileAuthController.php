@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\MobileVerifyRequest;
 use App\Services\VerificationService;
 use Illuminate\Http\Request;
 
@@ -11,25 +12,21 @@ class MobileAuthController extends Controller
     {
     }
 
-    public function verify(Request $request)
+    public function verify(MobileVerifyRequest $request)
     {
-        $request->validate([
-            'code' => 'required|digits:6'
-        ]);
+        $result = $this->verificationService->verifyOtp($request->user(), $request->validated('code'));
 
-        $result = $this->verificationService->verifyOtp($request->user(), $request->code);
-
-        // check verification result
         if ($result === true) {
-            return $this->successResponse('Email verified successfully.');
+            return $this->successResponse(null, 'Email verified successfully.');
         }
 
-        return $this->errorResponse($result , 400);
+        return $this->errorResponse($result, 400);
     }
 
     public function resend(Request $request)
     {
         $this->verificationService->sendOtp($request->user());
-        return $this->successResponse('OTP has been resent to your email.');
+        return $this->successResponse(null, 'OTP has been resent to your email.');
     }
 }
+
